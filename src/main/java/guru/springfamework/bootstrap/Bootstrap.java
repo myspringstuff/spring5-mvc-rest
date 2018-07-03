@@ -19,6 +19,11 @@ public class Bootstrap implements CommandLineRunner{
 
     @Override
     public void run(String... args) throws Exception {
+        loadCategories();
+
+    }
+
+    private void loadCategories() {
         Category fruits = new Category();
         fruits.setName("Fruits");
 
@@ -42,6 +47,5 @@ public class Bootstrap implements CommandLineRunner{
 
 
         System.out.println("Data Loaded = " + categoryRespository.count() );
-
     }
 }

@@ -5,6 +5,7 @@ import guru.springfamework.api.v1.model.CustomerDTO;
 import guru.springfamework.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,11 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDTO getCustomerByName(String name) {
-        return null;
+        return customerMapper.customerToCustomerDTO(customerRepository.findCustomerByFirstName(name));
+    }
+
+    @Override
+    public CustomerDTO getCustomerById(Long id) {
+        return customerMapper.customerToCustomerDTO(customerRepository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 }
