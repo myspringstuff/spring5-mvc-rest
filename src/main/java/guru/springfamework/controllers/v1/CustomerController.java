@@ -22,11 +22,15 @@ public class CustomerController {
 
     @GetMapping
     public ResponseEntity<List<CustomerDto>> findAllCustomers() {
-        return new ResponseEntity<>(customerService.getAllCustomers(), HttpStatus.OK);
+        List<CustomerDto> customers = customerService.getAllCustomers();
+        customers.forEach(c -> c.setCustomerUrl("/api/v1/customers/" + c.getId()));
+        return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDto> findCustomerByID(@PathVariable Long id) {
-        return new ResponseEntity<>(customerService.getCustomerById(id), HttpStatus.OK);
+        CustomerDto customer = customerService.getCustomerById(id);
+        customer.setCustomerUrl("/api/v1/customers/" + id);
+        return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 }

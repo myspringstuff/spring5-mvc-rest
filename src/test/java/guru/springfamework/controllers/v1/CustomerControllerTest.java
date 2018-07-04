@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -56,12 +57,26 @@ public class CustomerControllerTest {
                 get("/api/v1/customers")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.customers", hasSize(2)))
+                .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(status().isOk());
 
     }
 
     @Test
-    public void findCustomerByID() {
+    public void findCustomerByID() throws Exception {
+        //given
+        Long id = 1L;
+        CustomerDto dto = new CustomerDto();
+        dto.setFirstname("Foo");
+        dto.setLastname("bar");
+        dto.setId(id);
+
+        //when
+        when(customerService.getCustomerById(id)).thenReturn(dto);
+
+        //then
+        mockMvc.perform(get("/api/v1/customers/1").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id", equalTo(1)))
+                .andExpect(status().isOk());
     }
 }
