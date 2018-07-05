@@ -5,9 +5,7 @@ import guru.springfamework.services.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +30,10 @@ public class CustomerController {
         CustomerDto customer = customerService.getCustomerById(id);
         customer.setCustomerUrl("/api/v1/customers/" + id);
         return new ResponseEntity<>(customer, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customer) {
+        return new ResponseEntity<>(customerService.createCustomer(customer), HttpStatus.CREATED);
     }
 }

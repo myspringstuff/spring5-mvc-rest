@@ -17,8 +17,10 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,5 +80,24 @@ public class CustomerControllerTest {
         mockMvc.perform(get("/api/v1/customers/1").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", equalTo(1)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testCreateCustomer() throws Exception {
+        //given
+        String firstname = "Online Customer";
+        CustomerDto dto = new CustomerDto();
+        dto.setFirstname(firstname);
+        dto.setLastname("Pilot");
+
+        //when
+        CustomerDto saved=customerService.createCustomer(dto);
+
+        //then
+        mockMvc.perform(post("/api/v1/customers", dto)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.firstname", equalTo(firstname)))
+                .andExpect(status().isCreated());
+        assertTrue(saved.getId() > 0);
     }
 }
