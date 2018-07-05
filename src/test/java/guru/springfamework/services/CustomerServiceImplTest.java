@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -62,7 +63,7 @@ public class CustomerServiceImplTest {
         customer1.setFirstName("Jack");
 
         //when
-        when(customerRepository.findById(id)).thenReturn(Optional.of(customer1));
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.ofNullable(customer1));
 
         //then
         CustomerDto customerDto = customerService.getCustomerById(id);

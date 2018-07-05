@@ -41,4 +41,9 @@ public class CustomerServiceImpl implements CustomerService {
         savedDto.setCustomerUrl("/api/v1/customer/" + saved.getId());
         return savedDto;
     }
+
+    @Override
+    public CustomerDto updateCustomer(CustomerDto customer) {
+        return null;
+    }
 }

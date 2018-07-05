@@ -10,4 +10,7 @@ public interface CustomerService {
     CustomerDto getCustomerById(Long id);
 
     CustomerDto createCustomer(CustomerDto customer);
+
+    CustomerDto updateCustomer(CustomerDto customer);
+
 }
