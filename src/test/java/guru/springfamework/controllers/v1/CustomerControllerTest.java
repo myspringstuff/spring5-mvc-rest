@@ -2,7 +2,6 @@ package guru.springfamework.controllers.v1;
 
 import guru.springfamework.api.v1.model.CustomerDto;
 import guru.springfamework.controllers.AbstractRestControllerTest;
-import guru.springfamework.controllers.v1.CustomerController;
 import guru.springfamework.services.CustomerService;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,14 +17,11 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class CustomerControllerTest extends AbstractRestControllerTest {
 
@@ -108,5 +104,31 @@ public class CustomerControllerTest extends AbstractRestControllerTest {
                 .content(asJsonString(customer)))
                 .andExpect(jsonPath("$.firstname", equalTo(firstname)))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void testUpdateCustomer() throws Exception {
+        //given
+        Long id = 99L;
+        String firstName = "John";
+        String lastName = "Smith";
+
+        CustomerDto dto = new CustomerDto();
+        dto.setFirstname(firstName);
+        dto.setLastname(lastName);
+
+        CustomerDto savedDto = new CustomerDto();
+        savedDto.setFirstname(firstName);
+        savedDto.setLastname(lastName);
+
+        when(customerService.updateCustomer(anyLong(), any(CustomerDto.class))).thenReturn(savedDto);
+
+        //when & then
+        mockMvc.perform(put("/api/v1/customers/" + id)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(asJsonString(dto)))
+            .andExpect(jsonPath("$.firstname", equalTo(firstName)))
+            .andExpect(jsonPath("$.lastname", equalTo(lastName)))
+            .andExpect(status().isOk());
     }
 }
