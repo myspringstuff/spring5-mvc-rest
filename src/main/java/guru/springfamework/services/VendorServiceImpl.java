@@ -3,6 +3,7 @@ package guru.springfamework.services;
 import guru.springfamework.BeanSupport;
 import guru.springfamework.api.v1.mapper.VendorMapper;
 import guru.springfamework.api.v1.model.VendorDTO;
+import guru.springfamework.api.v1.model.VendorListDTO;
 import guru.springfamework.domain.Vendor;
 import guru.springfamework.repositories.VendorRepository;
 import org.springframework.beans.BeanWrapper;
@@ -26,10 +27,11 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public List<VendorDTO> getAllVendors() {
-        return vendorRepository.findAll().stream()
+    public VendorListDTO getAllVendors() {
+        List<VendorDTO> vendors = vendorRepository.findAll().stream()
                 .map(vendorMapper::vendorToVendorDTO)
                 .collect(Collectors.toList());
+        return new VendorListDTO(vendors);
     }
 
     @Override
@@ -62,7 +64,9 @@ public class VendorServiceImpl implements VendorService {
 
         Vendor existing = vendorRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         BeanSupport.copyProperties(incoming, existing, true);
-        return vendorMapper.vendorToVendorDTO(vendorRepository.save(existing));
+        VendorDTO savedDto =  vendorMapper.vendorToVendorDTO(vendorRepository.save(existing));
+        savedDto.setVendorUrl("/api/v1/vendors/"+existing.getId());
+        return savedDto;
     }
 
     @Override

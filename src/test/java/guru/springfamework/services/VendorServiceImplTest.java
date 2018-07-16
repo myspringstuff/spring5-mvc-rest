@@ -6,6 +6,7 @@ import guru.springfamework.annotation.IgnoredProperty;
 import guru.springfamework.api.v1.mapper.VendorMapper;
 import guru.springfamework.api.v1.model.CustomerDTO;
 import guru.springfamework.api.v1.model.VendorDTO;
+import guru.springfamework.api.v1.model.VendorListDTO;
 import guru.springfamework.domain.Customer;
 import guru.springfamework.domain.Vendor;
 import guru.springfamework.repositories.VendorRepository;
@@ -21,9 +22,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,10 +62,10 @@ public class VendorServiceImplTest {
         when(vendorRepository.findAll()).thenReturn(Arrays.asList(vendor1, vendor2));
 
         //when
-        List<VendorDTO> vendorDTOS = vendorService.getAllVendors();
+        VendorListDTO vendorDTOS = vendorService.getAllVendors();
 
         //then
-        assertEquals(2, vendorDTOS.size());
+        assertEquals(2, vendorDTOS.getVendors().size());
     }
 
     @Test
@@ -71,12 +76,17 @@ public class VendorServiceImplTest {
         vendor.setId(id);
         vendor.setName("Haval");
 
+        given(vendorRepository.findById(anyLong())).willReturn(Optional.of(vendor));
+
         when(vendorRepository.findById(anyLong())).thenReturn(Optional.of(vendor));
 
         //when
         VendorDTO vendorDTO = vendorService.getById(id);
 
         //then
+        then(vendorRepository).should(times(1)).findById(anyLong());
+
+        assertThat(vendorDTO.getName(), is(equalTo("Haval")));
         assertEquals("Haval", vendorDTO.getName());
     }
 
